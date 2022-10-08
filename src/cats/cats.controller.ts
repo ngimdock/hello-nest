@@ -15,6 +15,7 @@ import {
   ParseBoolPipe,
   DefaultValuePipe,
   UseGuards,
+  SetMetadata,
 } from '@nestjs/common';
 import {
   CreateCatDto,
@@ -29,9 +30,10 @@ import { JoiValidationPipe } from 'src/pipes/joiValidation.pipe';
 import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { CustomParseIntPipe } from 'src/pipes/custom-parse-int.pipe';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { Roles } from 'src/decorators/role.decorator';
 
 @Controller('cats')
-// @UseGuards(RolesGuard)
+@UseGuards(RolesGuard)
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
@@ -101,6 +103,7 @@ export class CatsController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   remove(@Param('id', new CustomParseIntPipe()) id): string {
     this.catsService.remove(id);
 

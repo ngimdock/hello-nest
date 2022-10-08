@@ -16,7 +16,7 @@ import { RolesGuard } from './guards/roles.guard';
 @Module({
   imports: [CatsModule],
   providers: [
-    { provide: APP_GUARD, useClass: RolesGuard },
+    // { provide: APP_GUARD, useClass: RolesGuard },
     { provide: APP_PIPE, useClass: ValidationPipe },
   ],
 })
