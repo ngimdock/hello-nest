@@ -35,10 +35,13 @@ import { Roles } from 'src/decorators/role.decorator';
 import { LogginInterceptor } from 'src/interceptors/loggin.interceptor';
 import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
 import { ExcludeNullInterceptor } from 'src/interceptors/ExcludeNull.interceptor';
+import { CacheInterceptor } from 'src/interceptors/cache.interceptor';
+import { TimeoutInterceptor } from 'src/interceptors/timeout.interceptor';
 
 @Controller('cats')
 @UseGuards(RolesGuard)
 @UseInterceptors(LogginInterceptor)
+@UseInterceptors(TimeoutInterceptor)
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
@@ -62,6 +65,7 @@ export class CatsController {
 
   @Get()
   @UseInterceptors(TransformInterceptor)
+  // @UseInterceptors(CacheInterceptor)
   async findAll(
     @Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe)
     activeOnly: boolean,
@@ -92,8 +96,8 @@ export class CatsController {
   async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
     // throw new CustomException();
     this.catsService.create(createCatDto);
-    // return 'cat was created';
-    return null;
+    return 'cat was created';
+    // return null;
   }
 
   @Put(':id')
