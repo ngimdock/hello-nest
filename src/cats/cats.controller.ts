@@ -16,6 +16,7 @@ import {
   DefaultValuePipe,
   UseGuards,
   SetMetadata,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   CreateCatDto,
@@ -31,9 +32,13 @@ import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { CustomParseIntPipe } from 'src/pipes/custom-parse-int.pipe';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { Roles } from 'src/decorators/role.decorator';
+import { LogginInterceptor } from 'src/interceptors/loggin.interceptor';
+import { TransformInterceptor } from 'src/interceptors/transform.interceptor';
+import { ExcludeNullInterceptor } from 'src/interceptors/ExcludeNull.interceptor';
 
 @Controller('cats')
 @UseGuards(RolesGuard)
+@UseInterceptors(LogginInterceptor)
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
@@ -56,6 +61,7 @@ export class CatsController {
   }
 
   @Get()
+  @UseInterceptors(TransformInterceptor)
   async findAll(
     @Query('activeOnly', new DefaultValuePipe(false), ParseBoolPipe)
     activeOnly: boolean,
@@ -82,12 +88,12 @@ export class CatsController {
   @Post()
   // @UseFilters(HttpExceptionFilter)
   // @UsePipes(new JoiValidationPipe(createCatSchema))
-  async create(
-    @Body(new ValidationPipe()) createCatDto: CreateCatDto,
-  ): Promise<string> {
+  @UseInterceptors(ExcludeNullInterceptor)
+  async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
     // throw new CustomException();
     this.catsService.create(createCatDto);
-    return 'cat was created';
+    // return 'cat was created';
+    return null;
   }
 
   @Put(':id')
