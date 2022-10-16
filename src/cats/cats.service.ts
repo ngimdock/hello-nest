@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { Cat } from './interfaces/cats.interface';
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class CatsService {
   private readonly cats: Cat[] = [];
 

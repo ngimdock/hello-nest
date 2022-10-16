@@ -17,6 +17,7 @@ import {
   UseGuards,
   SetMetadata,
   UseInterceptors,
+  Scope,
 } from '@nestjs/common';
 import {
   CreateCatDto,
@@ -38,7 +39,7 @@ import { ExcludeNullInterceptor } from 'src/interceptors/ExcludeNull.interceptor
 import { CacheInterceptor } from 'src/interceptors/cache.interceptor';
 import { TimeoutInterceptor } from 'src/interceptors/timeout.interceptor';
 
-@Controller('cats')
+@Controller({ path: 'cats', scope: Scope.DEFAULT })
 @UseGuards(RolesGuard)
 @UseInterceptors(LogginInterceptor)
 @UseInterceptors(TimeoutInterceptor)
@@ -113,7 +114,7 @@ export class CatsController {
   }
 
   @Delete(':id')
-  @Roles('admin')
+  // @Roles('admin')
   remove(@Param('id', new CustomParseIntPipe()) id): string {
     this.catsService.remove(id);
 

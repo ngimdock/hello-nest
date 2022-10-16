@@ -4,6 +4,7 @@ import {
   MiddlewareConsumer,
   RequestMethod,
   ValidationPipe,
+  Scope,
 } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { CatsModule } from './cats/cats.module';
@@ -13,7 +14,12 @@ import { CatsController } from './cats/cats.controller';
 import { secondMiddleware } from './middlewares/second.middleware';
 import { RolesGuard } from './guards/roles.guard';
 import { LogginInterceptor } from './interceptors/loggin.interceptor';
-import { CONFIG, CONNECTION, DEVELOPMENT } from './constants/constants';
+import {
+  ASYNC_CONNEXION,
+  CONFIG,
+  CONNECTION,
+  DEVELOPMENT,
+} from './constants/constants';
 
 //  Non-class-based provider tokens
 const connexion = {
@@ -46,9 +52,23 @@ const configFactory = {
   },
 };
 
+// Asynchronous providers
+
+const createConnexion = () => {
+  console.log('connexion to the database');
+};
+const connectToDatabaseFactory = {
+  provide: ASYNC_CONNEXION,
+  useFactory: async () => {
+    const connexion = await createConnexion();
+    return connexion;
+  },
+};
+
 @Module({
   imports: [CatsModule],
   providers: [
+    connectToDatabaseFactory,
     { provide: APP_GUARD, useClass: RolesGuard },
     // { provide: APP_INTERCEPTOR, useClass: LogginInterceptor },
     { provide: APP_PIPE, useClass: ValidationPipe },
